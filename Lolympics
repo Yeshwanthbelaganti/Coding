@@ -1,0 +1,64 @@
+It's Lolympics 2016 right now, and we all know who's the best player there right now: Kalyani! Obviously, he has a huge female fan following and he has to make sure they are all happy and rooting for him to win the gold medals.
+But with fan following comes arrogance and lack of time.
+Thus, he has sufficient time to interact with atmost T of his fans. 
+Each fan is defined by two parameters : Name and Fan Quotient. 
+The name defines the name of the fan, while the fan quotient is a measure of the fan's devotion towards Kalyani.
+Higher the fan quotient, greater is the devotion. Kalyani now wants to meet T of his fans. 
+While selecting the fans he wants to meet, he wants to make sure that a fan with a higher fan quotient should be given a chance in favour of those with lesser fan quotient.
+In case of ties, he sorts their name lexicographically and chooses the lexicographically lesser named fan.
+Given details of N fans, can you help out Kalyani by giving him a list of fans he would be interacting with?
+---------------------------------------------------------------------------
+#include<bits/stdc++.h>
+#include<string>
+using namespace std;
+bool compare(string a,string b)
+{
+    int i=0;
+    while(1)
+    {
+        if(a[i]=='\0'|| a[i]<b[i])
+            return 0;
+        else if(b[i]=='\0'||a[i]<b[i])
+            return 1;
+        i++;
+    }
+}
+int BubbleSort(string str[],long a[],long n)
+{
+    long i,j,dummy;
+    string swap;
+    for(i=0;i<n-1;i++){
+        for(j=0;j<n-1;j++){
+            if(a[j]<a[j+1]){
+                dummy=a[j];
+                a[j]=a[j+1];
+                a[j+1]=dummy;
+                swap=str[j];
+                str[j]=str[j+1];
+                str[j+1]=swap;
+            }
+            else if(a[j]==a[j+1])
+            {
+                if(compare(str[j],str[j+1]))
+                {
+                    swap=str[j];
+                    str[j]=str[j+1];
+                    str[j+1]=swap;
+                }
+                
+            }
+        }
+    }
+}
+int main()
+{
+    long n,t,fq[1001],i;
+    string name[1001];
+    cin>>n>>t;
+    for(i=0;i<n;i++)
+        cin>>name[i]>>fq[i];
+    BubbleSort(name,fq,n);
+    for(i=0;i<t;i++)
+        cout<<name[i]<<endl;
+    return 0;
+}
