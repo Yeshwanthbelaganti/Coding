@@ -1,0 +1,65 @@
+There are N people in city, who wants to visit Kingdom of Dreams. The road of reaching of Kingdom is not so safe. 
+So, they go to kingdom only in a security vehicle which can accommodate almost 2 people.
+(There is only one security vehicle available in the town as it is quite costly and unique). 
+People started to hire this vehicle to reach safely by driving it by themselves. 
+Every part of journey from town to kingdom or from kingdom to town has some cost associated with it which is given by an array A[] elements.
+Array A[] has n elements, where A(i) represents the cost i-th person has to pay if they travel alone in the vehicle. 
+If two people travel in vehicle, the cost of travel will be the maximum of cost of two people. Calculate the minimum total cost so that all N people can reach Kingdom safely.
+------------------------------------------------------------------------------------------------
+t=int(input())
+for i in range(t):
+    n=int(input())
+    l=list(map(int,input().split()))
+    l.sort()
+    c=0
+    cl=0
+    if(n<=2):
+        c=max(l)
+        cl=max(l)
+    else:
+        l2=l.copy()
+        k=[]
+        k.append(l[1])
+        n=n-1
+        k.sort()
+        c=c+l[1]+l[0]
+        l.remove(l[1])
+        l.sort()
+        while(n>0):
+            k.append(max(l))
+            c=c+max(l)
+            l.remove(max(l))
+            n=n-1
+            if(n==0):
+                break;
+            k.append(max(l))
+            l.remove(max(l))
+            n=n-1
+            if(n==0):
+                break;
+            l.append(min(k))
+            n=n+1
+            c=c+min(k)
+            k.remove(min(k))
+        k=[]
+        n=len(l2)
+        while(n>0):
+            k.append(max(l2))
+            cl=cl+max(l2)
+            k.append(min(l2))
+            l2.remove(max(l2))
+            n=n-1
+            if(n==0):
+                break;
+            l2.remove(min(l2))
+            n=n-1
+            if(n==0):
+                break;
+            l2.append(min(k))
+            n=n+1
+            cl=cl+min(k)
+            k.remove(min(k))
+    if(cl<c):
+        print(cl)
+    else:
+        print(c)
