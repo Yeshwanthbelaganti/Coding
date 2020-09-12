@@ -1,0 +1,113 @@
+Ria and Sana are bored with solving problems. Fortunately, Ria has found N bars of chocolate. They all have the same width, but differ in their lengths. 
+In fact, no two chocolate bars have the same length. All the N bars are kept in a row. Let's say that their lengths are given by L[1], L[2], … , L[n] from left to right. 
+That is, length of bar i is L[i].
+Ria decided to play a little game with Sana. In one step, Sana has to choose some bar which has not been eaten yet. 
+Ria hates inversions, so he will instantaneously eat that bar, along with every other Bar with which it forms an Inversion Pair. 
+We say that bars i and j form an Inversion Pair, if the bar to the left is longer than the bar to the right.
+That is, if Sana selects bar i, whose length is L[i], then Ria will eat this, as well as every bar j such that j > i and L[j] < L[i], as well as every bar k such that k < i and L[k] > L[i].
+After this, the step ends, they proceed to the next step, where Sana selects another bar and the whole process repeats. The game ends when all the N chocolate bars are eaten.
+Sana doesn't like this game because she does not get any chocolate. So, she wants to finish it as soon as possible and go back to sleep.
+Please help her find the minimum number of steps needed for the game to end.
+-------------------------------------------------------------------------
+#include <bits/stdc++.h>
+#define finc(i,a,b) for(int i=a; i<=b; ++i)
+#define fdec(i,a,b) for(int i=a; i>=b; --i)
+using namespace std;
+
+void read(int &x){
+    x=0; char c=getchar(); bool neg=false;
+    while (c!='-'&&(c<'0'||c>'9')) c=getchar(); if (c=='-') neg=true, c=getchar();
+    while ('0'<=c&&c<='9') x=x*10+c-'0', c=getchar();
+    if (neg) x=-x;
+}
+void write(int x){
+    if (x>=10) write(x/10);
+    putchar(x%10+'0');
+}
+void writeln(int x){
+    write(x); putchar('\n');
+}
+const int
+    max_N = 100003;
+int
+    no_of_chocolates, Length_of_the_chocolates[max_N], P[max_N], BitL[max_N], PL[max_N], BitR[max_N], PR[max_N], ID[max_N], Tree[4*max_N];
+
+void readinp(){
+    read(no_of_chocolates);
+    finc(i,1,no_of_chocolates) read(Length_of_the_chocolates[i]);
+}
+
+void updateL(int u, int x){
+    while (u>=1) BitL[u]=min(BitL[u],x), u-=u&-u;
+}
+int getL(int u){
+    int rr=no_of_chocolates+1;
+    while (u<=no_of_chocolates) rr=min(rr,BitL[u]), u+=u&-u;
+    return rr;
+}
+void initL(int u){
+    while (u>=1) BitL[u]=no_of_chocolates+1, u-=u&-u;
+}
+
+void updateR(int u, int x){
+    while (u<=no_of_chocolates) BitR[u]=max(BitR[u],x), u+=u&-u;
+}
+int getR(int u){
+    int rr=0;
+    while (u>=1) rr=max(rr,BitR[u]), u-=u&-u;
+    return rr;
+}
+void initR(int u){
+    while (u<=no_of_chocolates) BitR[u]=0, u+=u&-u;
+}
+
+void update(int id, int l, int r, int u, int val){
+    if (l==r) {Tree[id]=val; return;}
+    int mid=(l+r)/2;
+    if (u>mid) update(id*2+1,mid+1,r,u,val);
+          else update(id*2,l,mid,u,val);
+    Tree[id]=min(Tree[2*id],Tree[2*id+1]);
+}
+int get(int id, int l, int r, int u, int v){
+    if (u>v||l>v||r<u) return no_of_chocolates;
+    if (u<=l&&r<=v) return Tree[id];
+    int mid=(l+r)/2;
+    return min(get(id*2,l,mid,u,v),get(id*2+1,mid+1,r,u,v));
+}
+void build(int id, int l, int r){
+    if (l==r) {if (P[l]==no_of_chocolates) P[l]=1; else ++P[l]; return;}
+    int mid=(l+r)/2;
+    build(id*2,l,mid);
+
+    fdec(i,mid,l) PL[i]=getL(Length_of_the_chocolates[i]+1), updateL(Length_of_the_chocolates[i],Length_of_the_chocolates[i]);
+    fdec(i,mid,l) initL(Length_of_the_chocolates[i]);
+    finc(i,mid+1,r) PR[i]=getR(Length_of_the_chocolates[i]-1), updateR(Length_of_the_chocolates[i],Length_of_the_chocolates[i]);
+    finc(i,mid+1,r) initR(Length_of_the_chocolates[i]);
+
+    finc(i,l,r) ID[i]=i;
+    sort(ID+l,ID+mid+1);
+    sort(ID+mid+1,ID+r+1);
+    int tmp=mid;
+    fdec(i,r,mid+1){
+        while (tmp>=l&&PL[ID[tmp]]>Length_of_the_chocolates[ID[i]]) update(1,1,no_of_chocolates,Length_of_the_chocolates[ID[tmp]],P[ID[tmp]]), --tmp;
+        P[ID[i]]=min(P[ID[i]],get(1,1,no_of_chocolates,PR[ID[i]]+1,Length_of_the_chocolates[ID[i]]-1));
+    }
+    finc(i,l,mid) update(1,1,no_of_chocolates,Length_of_the_chocolates[i],no_of_chocolates);
+    build(id*2+1,mid+1,r);
+}
+
+void solve(){
+    ++no_of_chocolates;
+    Length_of_the_chocolates[no_of_chocolates]=no_of_chocolates;
+    finc(i,1,4*no_of_chocolates) Tree[i]=no_of_chocolates;
+    finc(i,1,no_of_chocolates) BitL[i]=no_of_chocolates+1, BitR[i]=0, P[i]=no_of_chocolates;
+    build(1,1,no_of_chocolates);
+    writeln(P[no_of_chocolates]-1);
+}
+
+int main(){
+
+     readinp();
+     solve();
+     return 0;
+}
