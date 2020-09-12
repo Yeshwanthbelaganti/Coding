@@ -1,0 +1,85 @@
+Lets define S(x, {A1, A2, A3, ..., Ax}) as a game played by 2 players in which we have x piles of stones with ith pile having Ai stones. 
+Player 1 moves first. The players move alternatively. 
+In a move, a player can select a single non-empty pile of stones and remove any number ( > 0 ) of stones from it. 
+At the point when a player can't make a move, the player loses.
+Rohit and Hardik are playing a modification of this game. 
+There are N piles of stones lined up and ith pile has Ai number of stones.
+Hardik needs to divide the N piles into disjoint contiguous segments. 
+It is possible for a pile to not belong in a segment at all.
+The segments need to be selected in such a way such that, if ith pile is in a segment, then all the j's such that Ai = Aj, are also in the segment.
+Now they play games on these segments considering only the 'distinct sized piles' in the segment with Rohit as Player 1 and Hardik as Player 2.
+------------------------------------------------------
+#include<bits/stdc++.h>
+using namespace std;
+#define MAX 1000005
+int l[MAX];
+int r[MAX];
+int no_of_stones;
+vector<pair<pair<int,int>,int> > a;
+vector<int>x;
+int xx,yy,ii;
+int dp[MAX];
+int cxor;
+int last[MAX];
+int main()
+{
+    int number_of_piles;
+    scanf("%d",&number_of_piles);
+
+    for(int i=1; i<=number_of_piles; i++)
+    {
+        scanf("%d",&no_of_stones);
+        if(l[no_of_stones]==0)l[no_of_stones]=i;
+        r[no_of_stones]=i;
+    }
+    for(int i=1; i<=500000; i++)
+        if(l[i]&&r[i])
+            a.push_back({{l[i],r[i]},i});
+
+
+    sort(a.begin(),a.end());
+    a.push_back({{number_of_piles+7,number_of_piles+7},-1});
+
+
+    xx=a[0].first.first;
+    yy=a[0].first.second;
+    ii=a[0].second;
+    x.push_back(0);
+
+
+    for(int i=1; i<a.size(); i++)
+    {
+        if(a[i].first.first<yy)
+        {
+            ii^=a[i].second;
+            if(a[i].first.second>yy)yy=a[i].first.second;
+        }
+        else
+        {
+            x.push_back(ii);
+            xx=a[i].first.first;
+            yy=a[i].first.second;
+            ii=a[i].second;
+        }
+    }
+
+
+    number_of_piles=x.size();
+    cxor=x[0];
+    memset(last,-1,sizeof last);
+    last[0]=0;
+    for(int i=1; i<number_of_piles; i++)
+    {
+        cxor^=x[i];
+
+        if(last[cxor]!=-1)
+        {
+
+            dp[i]=max(dp[i-1],1+dp[last[cxor]]);
+        }
+        else dp[i]=dp[i-1];
+        last[cxor]=i;
+
+    }
+    printf("%d\n",dp[number_of_piles-1]);
+}
