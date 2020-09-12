@@ -1,0 +1,55 @@
+Curse your rival! Every year at the annual Stone Paper Scissors tournament, you have made it to the final match. 
+(Your Stone technique is unmatched, and your Paper cuts to the bone! Your Scissors need a little work, though.)
+But every year, Ram defeats you, even though his moves appear entirely random! And he claims to the press that he simply cannot be beaten. What is his secret?
+Fortunately, you think you have figured it out. This year, just before the tournament, you caught him visiting various shamans around town. 
+Aha! He is using the supernatural against you! You figured two can play at this game. 
+So you went and visited a set of fortune-tellers, who have each used a Tarot deck to predict a sequence that your rival will end up using, sometime during the match.
+However, your initial excitement has passed, and now you are feeling a little silly. 
+This cannot possibly work, right? In the end it feels like you have paid good money for a fraudulent, random set of predictions.
+Oh well; you might as well keep an eye out for some of them during the match. But which predictions will you use?
+In the final match, you and your rival will play n rounds of Stone Paper Scissors.
+In each round, your rival and you will both choose one of the three options (Stone, Paper, or Scissors). 
+Based on your selections, a winner of the round will be determined (exactly how is irrelevant to this problem).
+Given the length of the final match and the various predictions,
+sort them in order of how likely they are to appear sometime during the match as a contiguous sequence of options chosen by your rival, 
+assuming he is choosing his symbol in each round independently and uniformly at random.Assume stone as 'R',paper as 'P' and scissor as 'S'.
+-----------------------------------------------------------------------------------------------------------------
+#include <algorithm>
+#include <iostream>
+#include <string>
+#include <vector>
+using namespace std;
+
+#define HASHX 1049124381385522193LL
+#define HASHMOD 1000000009
+
+int main() {
+  int N, S;
+  while (cin >> N >> S) {
+    vector<pair<pair<vector<int>, int>, string> > v,it;
+    for (int j = 0; j < S; j++) {
+      string s;
+      cin >> s;
+      long long fhash = 0, curv = 1, bhash = 0;
+      long long fhash2 = 0, curv2 = 1, bhash2 = 0;
+      vector<int> overlaps;
+      for (int i = 0; i < s.size(); i++) {
+        if (fhash == bhash && fhash2 == bhash2 && (!i || 2*s.size()-i <= N)) {
+          overlaps.push_back(s.size()-i);
+        }
+        fhash += curv * (long long)s[i];
+        fhash2 = (fhash2 + curv2 * (long long)s[i]) % HASHMOD;
+        curv *= HASHX;
+        curv2 = (curv2 * 42) % HASHMOD;
+        bhash = bhash * HASHX + (long long)s[s.size()-1-i];
+        bhash2 = (bhash2 * 42 + (long long)s[s.size()-1-i]) % HASHMOD;
+      }
+      reverse(overlaps.begin(), overlaps.end());
+      v.push_back(make_pair(make_pair(overlaps, -j), s));
+    }
+
+    sort(v.begin(), v.end());
+    reverse(v.begin(), v.end());
+    for (it : v) cout << it.second << endl;
+  }
+}
