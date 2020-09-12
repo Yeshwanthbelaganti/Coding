@@ -1,0 +1,125 @@
+Sharma wants to paint the sheet of paper. The sheet has the size 1 × Z and consists of Z consecutive cells numbered from 1 to Z inclusive.
+There are also C available colors numbered from 1 to C inclusive. Current color of the ith cell is Col[i] (1 ≤ Col[i] ≤ C). Sharma can repaint some cells of the sheet. 
+In a single move, he chooses arbitrary pair of integers L and R such that 1 ≤ L ≤ R ≤ Z and some color Ci from 1 to C inclusive, 
+after that he repaints all the cells on the segment [L, R] to the color Ci, that is, he assigns Col[j] = Ci for j from L to R inclusive.
+NOTE: Sharma allowed to repaint each cell at most once during the whole sequence of moves.
+Help him to find the total number of different sheets he can get in no more than K moves. Since the answer can be large, print it modulo 1000000007 (109 + 7). 
+Two sheets are considered different if there exists at least one index i from 1 to Z inclusive, such that that A[i] is not equal to B[i], 
+where A[i] is the color of the ith cell of the first sheet and B[i] is the color of the ith cell of the second sheet. 
+Sharma has some enormous sheet of paper, possibly having billions of cells. But it has very specific structure. 
+Namely, it consists of several blocks of consecutive cells, where all cells in each particular block have the same color (possibly different for different blocks),
+and the number of these blocks is relatively small. Consider the following example. 
+Let our sheet of paper be {1, 1, 1, 2, 4, 4, 4, 1, 1} (numbers represent colors of the cells). 
+Then it consists of 4 blocks, where the first block has 3 cells of color 1, the second block has 1 cell of color 2,
+the third block has 3 cells of color 4 and the last fourth block has 2 cells of color 1. 
+It seems natural for consecutive blocks to be of different color but we allow opposite situation in the input too. 
+So please DO NOT assume that two consecutive blocks in the input are always of different color.
+---------------------------------------------------------------------------------------------
+#include<cstdlib>
+#include<cstring>
+#include<algorithm>
+#include<cmath>
+#include<vector>
+#include<map>
+#include<bitset>
+#include<set>
+#include<stack>
+#include<queue>
+#include<deque>
+#include<iostream>
+#include<bits/stdc++.h>
+using namespace std;
+typedef int MT[100][100];
+typedef int MM[100];
+typedef long long LL;
+int blocks,Colors,no_of_moves,size;
+int S[10],M[10];
+MM f,nf;
+int c[10],cnt;
+MT mat,nmat;
+const long long mo = 1000000007;
+void ksm(int n){
+	while (n){
+		if (n & 1){
+			memset(nf,0,sizeof(nf));
+			for (int i = 0;i <= size;i++)
+				for (int j = 0;j <= size ;j++)
+					nf[i] = (nf[i]+(LL)mat[i][j]*f[j])%mo;
+			for (int i = 0;i <= size ;i++) f[i] = nf[i];
+		}
+		n >>= 1;
+		memset(nmat,0,sizeof(nmat));
+		for (int i = 0;i <= size; i++)
+			for (int j = 0;j <= size ;j++){
+				LL tt = 0;
+				for (int k = 0;k <= size ;k++)
+					(tt += (LL)mat[i][k]*mat[k][j])%=mo;
+				nmat[i][j] = tt;
+			}
+		for (int i = 0;i <= size ;i++)
+			for (int j = 0;j <= size ;j++) mat[i][j] = nmat[i][j];
+	}
+}
+void DP(){
+	size = 2*no_of_moves;
+	cnt = 0;
+	for (int i = 1;i <= blocks;i++){
+		int pos = -1;
+		for (int j = 1;j <= cnt;j++)
+			if (S[i] == c[j]) {pos = j;break;}
+		if (pos == -1){
+			c[++cnt] = S[i];
+			pos = cnt;
+			for (int j = 1;j <= no_of_moves;j++)
+				f[++size] = f[no_of_moves+j];
+		}
+		memset(mat,0,sizeof(mat));
+		mat[0][0] = 1;
+		for (int k = 1;k <= no_of_moves;k++){
+			mat[k][k] = 1;
+			for (int j = 1;j <= cnt;j++)
+				if (j != pos)
+					mat[k][(j+1)*no_of_moves+k] = 1;
+			mat[k][no_of_moves+k] = Colors-cnt;
+			if (cnt < Colors){
+				int pp = no_of_moves + k;
+				mat[pp][pp] = 1;
+				mat[pp][k - 1] = 1;
+				if (k > 1){
+					for (int j = 1;j <= cnt;j++)
+						mat[pp][(j+1)*no_of_moves+k-1] = 1;
+					mat[pp][no_of_moves+k-1] = Colors-cnt-1;
+				}
+			}
+			for (int j = 1;j <= cnt;j++){
+				int pp = (j+1)*no_of_moves+k;
+				mat[pp][pp] = 1;
+				if (j != pos){
+					mat[pp][k - 1] = 1;
+					if (k > 1){
+						for (int jj = 1;jj <= cnt;jj++)
+							if (jj != j)
+								mat[pp][(jj+1)*no_of_moves+k-1] = 1;
+						mat[pp][no_of_moves+k-1] = Colors-cnt;
+					}
+				}
+			}
+		}
+		ksm(M[i]);
+	}
+}
+int main(){
+
+		scanf("%d%d%d",&blocks,&Colors,&no_of_moves);
+		for (int i = 1;i <= blocks;i++)
+        scanf("%d%d",&S[i],&M[i]);
+		memset(f,0,sizeof(f));
+		for (int i = 0;i <= no_of_moves;i++)
+			f[i] = 1;
+		DP();
+		int ans = (f[no_of_moves]+(LL)(Colors-cnt)*f[2*no_of_moves])%mo;
+		for (int j = 1;j <= cnt;j++)
+			ans = (ans+f[(j+1)*no_of_moves+no_of_moves])%mo;
+		printf("%d\n",ans);
+	return 0;
+}
