@@ -1,0 +1,104 @@
+A Software in the Moon Pathfinder space rocket suffered from an issue known as priority inversion. This issue can be solved by using the Priority Ceiling Protocol. You have to simulate the execution of multiple tasks according to this protocol. The tasks share a collection of resources, each of which can be used by only one task at a time. To ensure this, resources must be locked before use and unlocked after use. Each task is stated by start time, a unique base priority, and a sequence of instructions. Each task also has a current priority, which may change during execution. Instructions come in three types:
+
+Compute – perform a computation for one microsecond
+Lock k – lock resource k
+Unlock k – unlock resource k .
+After locking a resource, a task is said to own the resource until the task unlocks it. A task will unlock only the owned resource it most recently locked, will not lock a resource it already owns and will complete with no owned resources. Each resource has a fixed priority ceiling, which is the highest base priority of any task that contains an instruction to lock that resource. There is a single processor that executes the tasks.
+
+When the processor starts, it initializes its clock to zero and then runs an infinite loop with the following steps:
+
+Identify running tasks. A task is running if its start time <= current processor clock and not all of its instructions have been executed.
+Determine the current priorities of the running tasks and which of the running tasks are blocked. A running task T is blocked if the next instruction in T is to lock resource k and either resource k is already owned or at least one other task owns a resource l whose priority ceiling is >= current priority of T. If T is blocked, it is said to be blocked by every task owning such k or l. The current priority of a task T is the maximum of T’s base priority and the current priorities of all tasks that T blocks.
+Execute the next instruction of the non-blocked running task (if any) with the highest current priority. If there was no such task or if a compute instruction was executed, increment the processor clock by one microsecond. If a lock or unlock instruction was executed, do not increment the clock.
+The Priority Ceiling Protocol defined above has the following properties:
+
+Current priority is defined in terms of current priority and blocking, and blocking is defined in terms of current priority. While this may appear circular, there will always be a unique set of current priorities that satisfy the definitions.
+All tasks will eventually complete.
+There will never be a tie in 3rd step.
+-------------------------------------------------------
+#include <iostream>
+#include <vector>
+using namespace std;
+
+int main() {
+  int T, R, S, N;
+  while (cin >> T >> R) {
+    vector<int> tbp(T+1), ts(T+1), tip(T+1), rpc(R+1), tdone(T+1, -1);
+    vector<vector<pair<char, int> > > ti(T+1);
+    for (int i = 1; i <= T; i++) {
+      cin >> ts[i] >> tbp[i] >> N;
+      ti[i].resize(N);
+      for (int j = 0; j < N; j++) {
+        cin >> ti[i][j].first >> ti[i][j].second;
+        if (ti[i][j].first == 'L') {
+          rpc[ti[i][j].second] = max(rpc[ti[i][j].second], tbp[i]);
+        }
+      }
+    }
+
+    vector<int> held_by(R+1);
+    for (int curtime = 0, ndone = 0; ndone < T;) {
+      vector<int> curp = tbp;
+      int bestp, besti, bestambig;
+      bool change;
+      do {
+        change = false;
+        bestp = 0;
+        for (int i = 1; i <= T; i++)
+        if (curtime >= ts[i] && tip[i] < ti[i].size()) {
+          pair<char, int>& inst = ti[i][tip[i]];
+          bool blocked = false;
+          if (inst.first == 'L') {
+            if (held_by[inst.second]) {
+              blocked = true;
+              if (curp[held_by[inst.second]] < curp[i]) {
+                curp[held_by[inst.second]] = curp[i];
+                change = true;
+              }
+            }
+            for (int j = 1; j <= R; j++) {
+              if (held_by[j] && held_by[j] != i && rpc[j] >= curp[i]) {
+                blocked = true;
+                if (curp[held_by[j]] < curp[i]) {
+                  curp[held_by[j]] = curp[i];
+                  change = true;
+                }
+              }
+            }
+          }
+          if (!blocked && curp[i] > bestp) {
+            bestp = curp[i];
+            besti = i;
+            bestambig = false;
+          } else if (!blocked && curp[i] == bestp) {
+            bestambig = true;
+          }
+        }
+      } while (change);
+
+      if (bestp == 0) {curtime++; continue;}
+      if (bestambig) cout << "AMBIGUOUS!" << endl;
+
+      pair<char, int>& inst = ti[besti][tip[besti]];
+//cout << curtime << ' ' << bestp << ' ' << besti << ' ' << inst.first << inst.second << ' ' << held_by[1] << endl;
+      if (inst.first == 'C' && inst.second > 0) {
+        inst.second--;
+        curtime++;
+      } else {
+        if (inst.first == 'L') {
+          held_by[inst.second] = besti;
+        } else if (inst.first == 'U') {
+          held_by[inst.second] = 0;
+        }
+        if (++tip[besti] == ti[besti].size()) {
+          tdone[besti] = curtime;
+          ndone++;
+        }
+      }
+    }
+
+    for (int i = 1; i <= T; i++) {
+      cout << tdone[i] << endl;
+    }
+  }
+}
