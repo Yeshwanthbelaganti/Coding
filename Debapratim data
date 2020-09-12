@@ -1,0 +1,23 @@
+Debapratim likes Monali and asked her out on a date. She agreed but on a condition that he must reach the top of the Ultimate Stairway to Heaven.
+The stairway consists of N stairs.
+Initially, Debapratim is standing on the 1st stair. 
+The kth stair is associated with a number Ak such that, for 0 < i < Ak, Debapratim can jump to the (k+i)th stair from the kth stair.
+Your task is to find the no. of ways in which Debapratim can reach the Nth stair, the top of the Ultimate Stairway to Heaven. 
+Since the answer can be large, compute it modulo 1000000007.
+All test cases are designed such that every stair of the Ultimate Stairway to Heaven is reachable in at least one way
+-------------------------------------------------
+n=int(input());
+arr=list(map(int,input().split()));
+i=0;
+dp=[0]*n;
+m=10**9+7;
+s=0;
+for i in range(n):
+    s=(s%m+dp[i]%m)%m;
+    if arr[i]>0:
+        if i+1<n:
+            dp[i+1]=((dp[i+1]%m+s)%m) if s>0 else ((dp[i+1]+1)%m);
+            if i+arr[i]+1<n:
+                dp[i+arr[i]+1]=(dp[i+arr[i]+1]-s) if s>0 else dp[i+arr[i]+1]-1;
+# print(*dp)
+print(sum(dp)%m)
