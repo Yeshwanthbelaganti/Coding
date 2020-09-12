@@ -1,0 +1,49 @@
+Karthick and his friends are playing Cops and Robbers game. They are playing with a grid of size N×N with the below rules.
+
+Each cell in the grid contains either a Cop(P) or a Robber(T).
+A cop can only catch a robber if both of them are in the same row.
+Each cop can only catch one robber.
+A cop cannot catch a robber who is more than K units away from the cop.
+Karthick's sister is watching this game and she writes a program to find the maximum number of robbers that can be caught in the grid. So she asked her brother Karthick to explain the game with an example.
+Karthic said, if,
+Total Robbers = 5
+Number of robbers reachable by Cop in Row 1 = 1
+Number of robbers reachable by Cop in Row 2 = 2
+Number of robbers reachable by Cop in Row 3 = 1
+However, one cop can catch at most 1 robber. Hence, in Row 2, only 1 robber is catchable.
+Therefore, the 3 robbers can be caught in total.
+--------------------------------------------------------
+#policemen and thieves
+ 
+def solution (A, K):
+    caught = 0
+    if K > len(A):
+        for row in A:
+            caught+=(min(row.count("T"),row.count("P")))
+        return caught
+ 
+    for row in A:
+        row_len = len(row)
+        for i in range(row_len):
+            if row[i] == 'P':
+                thieve_found = False
+                for thief in range(max(0,i-K),min(i+K+1,row_len)):
+                    if row[thief] == 'T':
+                        row[thief] = 'X'
+                        thieve_found = True
+                        break
+                
+                if thieve_found:
+                    caught += 1
+                
+    return caught
+            
+ 
+T = int(input())
+for _ in range(T):
+    N, K = map(int, input().split())
+    A = []
+    for _ in range(N):
+        A.append(input().split())
+    out_ = solution(A, K)
+    print (out_)
