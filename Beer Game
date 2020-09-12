@@ -1,0 +1,65 @@
+Beer found a list of string recently. A game came into his mind instantaneously.
+The game is as awkward as beer's name :D The game is how many of the strings can be made using characters of Beer's all-time favorite string X
+------------------------------------------------------------
+x=input()
+ 
+xd=dict()
+ 
+for i in x:
+ 
+    try:
+ 
+        xd[i]+=1
+ 
+    except:
+ 
+        xd[i]=1
+ 
+ans=0
+ 
+n=int(input())
+ 
+for i in range(n):
+ 
+    y=input()
+ 
+    yd=dict()
+ 
+    for j in y:
+ 
+        try:
+ 
+            yd[j]+=1
+ 
+        except:
+ 
+            yd[j]=1
+ 
+    flag=0
+ 
+    
+ 
+    for k,j in yd.items():
+ 
+        try:
+ 
+            if yd[k] > xd[k]:
+ 
+                flag=1
+ 
+                break
+ 
+        except:
+ 
+            
+ 
+            flag=1
+ 
+            break
+ 
+    if flag==0:
+ 
+        ans+=1
+ 
+print(ans)
+ 
