@@ -1,0 +1,30 @@
+Joey loves to eat Pizza. But he is worried as the quality of pizza made by most of the restaurants is deteriorating. 
+The last few pizzas ordered by him did not taste good :(. Joey is feeling extremely hungry and wants to eat pizza. 
+But he is confused about the restaurant from where he should order. As always he asks Chandler for help.
+Chandler suggests that Joey should give each restaurant some points, and then choose the restaurant having maximum points. 
+If more than one restaurant has same points, Joey can choose the one with lexicographically smallest name.
+Joey has assigned points to all the restaurants, but can't figure out which restaurant satisfies Chandler's criteria. Can you help him out?
+------------------------------------------------------------------------
+#include<bits/stdc++.h>
+using namespace std;
+int main()
+{
+    int a;
+    cin>>a;
+    string st,ts;
+    int b,c=0;
+    for(int i=0;i<a;i++)
+    {
+        cin>>st>>b;
+        if(b>c)
+        {
+            c=b;
+            ts=st;
+        }
+        else if(b==1)
+        {
+            ts=min(st,ts);
+        }
+    }
+    cout<<ts;
+}
