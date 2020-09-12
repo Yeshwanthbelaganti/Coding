@@ -1,0 +1,42 @@
+Abhi and Ramu want to play 'The Word Game'.
+-------------------------------------------
+string = input()
+word = list(string)
+
+def occurrences(string,sub):
+    count=start=0
+    while True:
+        start=string.find(sub,start)+1
+        if start>0:
+            count+=1
+        else:
+            return count
+vow=list('AEIOU')
+kv=set()
+sc=set()
+kwl=set()
+swl=set()
+swlp=0
+kwlp=0
+for i in word:
+    if i in vow:
+        kv.add(i)
+    else:
+        sc.add(i)
+for i in range(len(word)):
+    for j in range(i,len(word)):
+        if word[i] in kv:
+            kwl.add(string[i:j+1])
+           # print '% %',(i,j+1)
+        else:
+            swl.add(string[i:j+1])
+for i in swl:
+    swlp=swlp+occurrences(string,i)
+for i in kwl:
+    kwlp=kwlp+occurrences(string,i)
+if swlp>kwlp:
+    print('Abhi',swlp)
+elif kwlp>swlp:
+    print('Ramu',kwlp)
+else:
+    print('Draw')
