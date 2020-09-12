@@ -1,0 +1,10 @@
+Manna is extremely disappointed to find out that no one in his college knows his first name. 
+Even his classmates call him only by his last name. Frustrated, he decides to make his fellow college students know his first name by forcing them to solve this question.
+You are given a long string as input in each testcase, containing any ASCII character. Your task is to find out the number of times SUVO and SUVOJIT appears in it.
+----------------------------------------------------------------------------
+# You are using Python
+for i in range(int(input())):
+    name = input()
+    suvo = name.count('SUVO')
+    suvojit = name.count('SUVOJIT')
+    print("SUVO = %d, SUVOJIT = %d" %(suvo-suvojit,suvojit))
