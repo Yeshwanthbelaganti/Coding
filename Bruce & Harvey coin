@@ -1,0 +1,69 @@
+Bruce becomes very sad when he realises that Harvey is now killing people based on the outcome of a coin toss. He also knows that Harvey kills someone only when he remembers Rachel while tossing the coin.
+Harvey tosses the coin finite number of times and lists the outcomes. In the list if Tails comes three times in a row, He remebers Rachel and kills the other person.
+Bruce is sad but wants to focus on positives. so he thinks about the number of ways when the other person is not killed for given number of tosses. 
+As he is unable to compute desired number he asks you to do so.
+---------------------------------------------------------------------
+from sys import stdin
+ 
+ 
+mod = 10 ** 9 + 7
+ 
+def answer(n):
+    a, b, c, d, e, f, g, h, i = 1, 1, 1, \
+                                1, 0, 0, \
+                                0, 1, 0
+    a_, b_, c_, d_, e_, f_, g_, h_, i_ = 1, 0, 0, \
+                                         0, 1, 0, \
+                                         0, 0, 1
+    k = n + 1
+    while k > 1:
+        if k % 2 == 0:
+            a, b, c, d, e, f, g, h, i = a * a + b * d + c * g, \
+                                        a * b + b * e + c * h, \
+                                        a * c + b * f + c * i, \
+                                        d * a + e * d + f * g, \
+                                        d * b + e * e + f * h, \
+                                        d * c + e * f + f * i, \
+                                        g * a + h * d + i * g, \
+                                        g * b + h * e + i * h, \
+                                        g * c + h * f + i * i
+            a, b, c, d, e, f, g, h, i = a % mod, b % mod, c % mod, \
+                                        d % mod, e % mod, f % mod, \
+                                        g % mod, h % mod, i % mod
+        else:
+            a_, b_, c_, d_, e_, f_, g_, h_, i_ = a * a_ + b * d_ + c * g_, \
+                                                 a * b_ + b * e_ + c * h_, \
+                                                 a * c_ + b * f_ + c * i_, \
+                                                 d * a_ + e * d_ + f * g_, \
+                                                 d * b_ + e * e_ + f * h_, \
+                                                 d * c_ + e * f_ + f * i_, \
+                                                 g * a_ + h * d_ + i * g_, \
+                                                 g * b_ + h * e_ + i * h_, \
+                                                 g * c_ + h * f_ + i * i_
+            a_, b_, c_, d_, e_, f_, g_, h_, i_ = a_ % mod, b_ % mod, c_ % mod, \
+                                        d_ % mod, e_ % mod, f_ % mod, \
+                                        g_ % mod, h_ % mod, i_ % mod
+            a, b, c, d, e, f, g, h, i = a * a + b * d + c * g, \
+                                        a * b + b * e + c * h, \
+                                        a * c + b * f + c * i, \
+                                        d * a + e * d + f * g, \
+                                        d * b + e * e + f * h, \
+                                        d * c + e * f + f * i, \
+                                        g * a + h * d + i * g, \
+                                        g * b + h * e + i * h, \
+                                        g * c + h * f + i * i
+            a, b, c, d, e, f, g, h, i = a % mod, b % mod, c % mod, \
+                                        d % mod, e % mod, f % mod, \
+                                        g % mod, h % mod, i % mod
+        k //= 2
+    return (a * a_ + b * d_ + c * g_) % mod
+ 
+ 
+def solve():
+    t = int(stdin.readline().strip())
+    for _ in range(t):
+        n = int(stdin.readline().strip())
+        print(answer(n))
+ 
+ 
+solve()
