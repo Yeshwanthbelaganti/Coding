@@ -1,0 +1,32 @@
+Ramu is in Birla Auditorium. He noticed that the auditorium is decored with an infinite series of electric bulbs indexed from 1. There are 40 switches indexed from 1 to 40 to control those bulbs. Switch with index N is connected to the bulbs with indexes that are multiple of N. i.e switch 2 is connected to bulb 2,4, 6, 8 .......
+So some bulbs are connected to multiple switches and some are not connected to any switch. Ramu started to play with these switches, he wants to know the Kth glowing bulb from the start if certain switches are in ON state. If any of the switch is ON, connected to any bulb then bulb starts glowing. But Ramu has special fond of prime numbers, so he only puts prime indexed switches ON.
+-----------------------------------------------
+switches = '0' + input()
+N = int(input())
+switch = []
+for i in range(len(switches)):
+	if switches[i] == '1':
+		switch.append(i)
+def num_glowing(n, primes):
+	if len(primes) == 0:
+		return 0
+	p = primes[0]
+	m = int(n/p)
+	ps = primes[1:]
+	return m + num_glowing(n, ps) - num_glowing(m, ps)
+(f, l) = (1, 40 * N)
+(u, v) = (0, num_glowing(l, switch))
+while l > f + 1:
+	m = int((f * (v - N) + l * (N - u)) / (v-u))
+	if m <= f:
+		m += 1
+	if m >= l:
+		m -= 1
+	x = num_glowing(m, switch)
+	if x >= N:
+		l = m
+		v = x
+	else:
+		f = m
+		u = x
+print (l)
