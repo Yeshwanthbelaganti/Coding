@@ -1,0 +1,21 @@
+Anbu wants to make this Valentine special for Disha. So, he wants to collect maximum number of roses. 
+Help him to collect maximum number of roses. 
+Roses are kept in boxes and the boxes are further arranged in an N×M grid.
+Anbu can pick a box and get all the roses it contains, but the hack is that if you choose a box, the box immediately below it cannot be selected.
+So, help him collect the maximum number of Roses.
+-------------------------------------------
+import sys
+for _ in range(int(sys.stdin.readline())):
+    n,m=map(int,sys.stdin.readline().split());
+    arr=[];
+    dp=[];
+    for _ in range(n):
+        arr.append(list(map(int,sys.stdin.readline().split())));
+        dp.append([0]*m);
+    dp[0]=arr[0];
+    for i in range(1,n):
+        for j in range(m):
+            for k in range(m):
+                if k!=j:
+                    dp[i][j]=max(dp[i][j],arr[i][j]+dp[i-1][k]);
+    print(max(dp[-1]));
