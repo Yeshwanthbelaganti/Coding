@@ -1,0 +1,54 @@
+As the IPL season is on, every restaurant is either full or is on waiting. A lot of youngsters visit these restaurants in groups and like to watch the big IPL matches. An owner of a restaurant observed that some groups of people often ended up fighting over food.
+The total amount that people have to spend on food is fixed so they order 'D' number of dishes that are the cheapest and they all eat by exchanging dishes.
+If a person A liked B's dish and B liked A's dish, so they exchange it.
+Let us consider another case, that is, if A liked B's dish ,B liked C's dish and C liked A's dish.
+So they can exchange the dishes with each other to get what they like. These groups for exchanging dishes can have more than 3 members as well. But usually this sort of an exchange arrangement ends up in fight, as a number of people in the group do not get the dish they like and have to stick with the original dish they got.
+The restaurant owner got a little worried because of the amount of fighting that has been going on in his restaurant everyday. So, he need's some help to make a plan such that he got to know, in advance, that which group will fight. This will allow him to resolve the matter immediately. Hence preventing the other groups from getting distracted and disturbed.
+So Your task is to print 'YES' if it is possible to exchange dishes such that all become happy and if not possible then print 'NO'.
+-------------------------------------
+// You are using GCC
+#include<stdio.h>
+int main()
+{
+    int a[30][30],i,j,flag=0,arr[30],n,d;
+    scanf("%d%d",&n,&d);
+    for(i=0;i<n;i++)
+    {
+        for(j=0;j<2;j++)
+        {
+            scanf("%d",&a[i][j]);
+            
+        }
+    }   
+    for(i=1;i<2;i++)
+    {
+        for(j=0;j<n;j++)
+        {
+            arr[j]=a[j][i];
+        }
+    }
+    
+       for(i=0;i<2;i++)
+    {
+        for(j=i;j<n-1;j++)
+        {
+            
+            if(arr[i]==arr[j+1])
+            {
+                flag=1;
+                
+            }
+        }
+    }
+    
+    if(flag==0)
+    {
+        printf("YES");
+    }
+    else
+    {
+        printf("NO");
+    }
+    
+    return 0;
+}
