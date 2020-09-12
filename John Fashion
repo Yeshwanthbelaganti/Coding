@@ -1,0 +1,42 @@
+Some people remain old fashioned and John is one of them. 
+He doesn't like the new smart phones with full keypads and still uses the old keypads which require you to tap a key multiple times to type a single letter.
+For example, if the keyboard has two keys, one with the letters "adef" and the other one with the letters "zyx", then typing 'a' requires one keystroke, 
+typing 'f' requires four keystrokes, typing 'y' requires two keystrokes, and so on.
+He recently moved to a new country where the language is such that his keypad is not the most efficient. In every language some characters occur more often than others. 
+He wants to create a specific keyboard for this language that uses N different letters.
+He has a large body of text in this language, and has already analyzed it to find the frequencies of all N letters of its alphabet.
+You are given an array 'frequencies' with N elements. Each element of frequencies is the number of times one of the letters in the new language appears in the text John has. 
+Each element of frequencies will be strictly positive. (I.e., each of the N letters occurs at least once.)
+You are also given an array keySize. The number of elements of keySize is the number of keys on the keyboard. 
+Each element of keySize gives the maximal number of letters that maybe put on one of the keys.
+Find an assignment of letters to keys that minimizes the number of keystrokes needed to type the entire text. 
+Output that minimum number of keystrokes. If there is not enough room on the keys and some letters of the alphabet won't fit, Output -1 instead.
+-------------------------------------------------------------------------------------------
+# You are using Python
+n=int(input())
+arr=list(map(int,input().split()))
+keypads=int(input())
+key_no=list(map(int,input().split()))
+arr.sort(reverse=True)
+sums=0
+k=0
+count=0
+mul=[0]*100
+total=sum(key_no)
+if(total<n):
+    print("-1")
+else:
+    for i in range(0,keypads):
+        for j in range(1,(key_no[i])+1):
+            mul[j]=mul[j]+1
+    key_no.sort(reverse=True)
+    l=key_no[0]
+    m=0
+    for k in range(1,l+1):
+        for t in range(0,mul[k]):
+            if(m<n):
+                sums=sums+(arr[m]*k)
+                m=m+1
+                if(m==n):
+                    break
+    print(sums)
