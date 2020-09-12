@@ -1,0 +1,53 @@
+Jenni has N eggs, she wants to prepare a special shampoo for her best friend Ria. In order to make this Shampoo, she has to break Z eggs. 
+For each egg, there is a fixed number of times Jenni needs to hit it if she wants it to break. Jenni can just hit one egg simultaneously.
+Their friend Sakshi is a troublemaker. This time, Sakshi shuffled the eggs in some unknown way. 
+You are given a sequence A1,A2,....,AN with the following meaning: it is possible to label the eggs 1 through N in such a way that for each valid i, the ith coconut needs to be hit exactly Ai times to break.
+Jenni wants to prepare the Shampoo as soon as possible, so she wants to minimize the number of times she has to hit eggs in the worst case in order to break Z eggs.
+Formally, she wants to find a strategy of hitting eggs, possibly depending on which eggs broke after which hits, such that no matter which eggs broke and when,
+it is guaranteed that after H hits, there will be Z broken eggs, and there is no strategy with smaller H. Help Jenni to find H — the minimum required number of hits.
+--------------------------------------------------------------------------------------
+#include<bits/stdc++.h>
+#define int long long
+using namespace std;
+int dp[1001][1001];
+int32_t main()
+{
+    ios::sync_with_stdio(false);
+    cin.tie(0);
+    int T,i,j,c,no,eggs;
+    cin>>no>>eggs;
+    vector<int>sequence(no);
+    for(i=0;i<no;++i)
+    {
+        cin>>sequence[i];
+    }
+    sort(sequence.begin(),sequence.end());
+    for(i=0;i<no;++i){
+        for(j=0;j<=eggs;++j){
+            dp[i][j]=INT_MAX;
+        }
+    }
+    for(i=0;i<no;++i)
+    {
+        dp[i][1]=sequence[i] *(no - i);
+    }
+    int curr;
+    for(c=2;c<=eggs;++c)
+    {
+        for(i=no-c;i>=0;--i)
+        {
+            for(j=i+1;j<no;++j)
+            {
+                curr=dp[j][c-1]+sequence[i]*(j-i);
+                dp[i][c]=min(dp[i][c],curr);
+            }
+        }
+    }
+    int ans=INT_MAX;
+    for(int i=0;i<no;++i)
+    {
+        ans=min(ans,dp[i][eggs]);
+    }
+    cout<< ans <<"\n";
+return 0;
+}
