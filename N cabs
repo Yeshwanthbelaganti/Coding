@@ -1,0 +1,33 @@
+Assume there are N persons and each person needs exactly one cab. 
+For each person, you are given the start time and end time (both inclusive) during which that person will travel. 
+Find the minimum number of cabs required.
+Input format
+First line contains an integer, N(1,<=N<=10^5) denoting the number of persons. 
+Next N lines contains 4 integersHH1,MM1,HH2,and MM2, (0<=HH1,HH2<=23) (0<=MM1,MM2<=59), denoting the start time (HH1:MM1) and end time (HH2:MM2). 
+It is guaranteed that start and end time will not span midnight.
+---------------------------------------------------------
+#include<bits/stdc++.h>
+using namespace std;
+const int MAX=100000;
+int A[MAX];
+int main()
+{
+    int n,hh1,hh2,mm1,mm2,smins,emins,ans;
+    cin>>n;
+    for(int i=0;i<n;i++)
+    {
+        cin>>hh1>>mm1>>hh2>>mm2;
+        smins=hh1*60+mm1;
+        emins=hh2*60+mm2;
+        A[smins]++;
+        A[emins+1]--;
+    }
+    ans=A[0];
+    for(int i=1;i<MAX;i++)
+    {
+        A[i]+=A[i-1];
+        ans=max(ans,A[i]);
+    }
+    cout<<ans<<endl;
+    return 0;
+}
