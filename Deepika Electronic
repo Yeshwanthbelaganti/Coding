@@ -1,0 +1,42 @@
+Deepika has an electronic device which has two screens and two buttons. Initially, each screen shows the number zero. 
+Pressing the first button increments the number on the first screen by 1, and each click of the first button consumes 1 unit of energy.
+Pressing the second button increases the number on the second screen by the number which is currently appearing on the first screen. 
+Each click of the second button consumes B units of energy.
+Initially the electronic device has N units of energy.
+Now Deepika wonders what the maximum possible number is, that he gets on the second screen of the device, with the limited energy.
+----------------------------------------
+#include<stdio.h>
+int main()
+{
+    int t;
+    long i;
+    long int n,b;
+    long long int maxl,maxh;
+            maxl=maxh=0;
+        scanf("%ld%ld",&n,&b);
+        for(i=n/2;i>0;--i){
+            if((n-i)%b==0){
+                maxl=i*((n-i)/b);
+                break;
+            }
+        }
+        for(i=(n/2)+1;i<n;++i){
+            if(maxl<(i*((n-i)/b))){
+                if((n-i)%b==0){
+                    maxh=i*((n-i)/b);
+                    break;
+                }
+            }
+                else if(maxh!=0)
+                {
+                    break;
+                }
+            }
+            if(maxl>maxh)
+                printf("%lld\n",maxl);
+            else
+                printf("%lld\n",maxh);
+        
+    
+    return 0;
+}
