@@ -1,0 +1,33 @@
+Hemanth's is a problem solver. 
+one day he saw a interesting problem in a newspaper that a person is having a rope of length n meters, you have to cut the rope in different parts of integer in a way that maximizes product of length of all parts. 
+Consider that the length of rope is more than 2 meters.(Note: You must cut at least one cut.)
+For Ex: N=10,
+Output : 36 (The rope length is cut into size of 4,3 and 3, so, the product is 4*3*3 =36)
+-----------------------------------------
+// You are using GCC
+#include<bits/stdc++.h>
+using namespace std;
+int max(int a,int b)
+{
+    return (a>b)?a:b;
+}
+int max(int a,int b,int c)
+{
+    return max(a,max(b,c));
+}
+int maxProd(int n)
+{
+    if(n==0||n==1)
+        return 0;
+    int max_val=0;
+    for(int i=1;i<n;i++)
+        max_val=max(max_val,i*(n-i),maxProd(n-i)*i);
+    return max_val;
+}
+int main()
+{
+    int n;
+    cin>>n;
+    cout<<maxProd(n);
+    return 0;
+}
