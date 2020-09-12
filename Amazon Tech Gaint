@@ -1,0 +1,162 @@
+Up-and-coming tech giant Amazon recently opened a central warehouse facility from which it ships packing crates by hyperloop to its regional distribution centers.
+Amazon has implemented an optimal packing policy in order to reduce shipping costs. Here's how the new process will work: 
+The loading dock has one packing platform dedicated to each of its remote distribution centers. 
+Each platform has docking space for loading three vactrains, labelled A, B, and C. 
+The packing crates are various sizes and arrive at the platform in sequential order from the warehouse queue. 
+The platform supervisor is responsible for packing each vactrain as full as possible. 
+This means that sometimes the dockbots will be directed to transfer a crate from the vactrain where it was loaded to another vactrain. 
+Only the most recently loaded crate can be removed from a vactrain. Also, crates cannot be kept -- even temporarily -- on the packing platform. 
+When a crate is removed from the warehouse queue, it must be immediately loaded into a vactrain. 
+Likewise, if a crate is removed from a vactrain it must be immediately packed into another vactrain. Each vactrain has a crate size capacity of ten.
+When the supervisor is satisfied that a vactrain cannot be loaded further, it is sent to its destination and an empty vactrain takes its place at the platform. 
+Amazon needs to maintain correct manifests of each vactrain. Write a program to track the packing of crates and sending of vactrains so that it can print accurate manifests.
+-------------------------------------------------------------------------------------
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define RECV 0
+#define LOAD 1
+#define XFER 2
+#define SEND 3
+#define DONE 4
+
+#define A 0
+#define B 1
+#define C 2
+
+#define MAX 40
+#define EMPTY (-1)
+
+char cmd[5] = {0,0,0,0,0};
+char args[MAX][256];
+int p=0;
+int s=1;
+int dock[MAX];
+int train[3][MAX];
+
+char ops[5][5] = {
+	"RECV",
+	"LOAD",
+	"XFER",
+	"SEND",
+	"DONE"
+};
+
+void dump() {
+	int i,j;
+	int t;
+	printf("Dock:\n");
+	for(i=0;dock[i]!=EMPTY;i++)
+		printf("\t%s\n",args[dock[i]]);
+	for(j=A;j<=C;j++) {
+		printf("Train %c:\n",j+'A');
+		for(i=0;train[j][i]!=EMPTY;i++)
+			printf("\t%s\n",args[train[j][i]]);
+	}
+}
+
+
+void recv(int p)  {
+	int i;
+	for(i=0;dock[i]!=-1;i++);
+	dock[i]=p;
+}
+
+void push(int t,int p)   {
+	int i,j;
+	for(i=0;train[t][i]!=EMPTY;i++);
+	train[t][i]=p;
+}
+
+int pop(int t) {
+	int i;
+	int r;
+	if(train[t][0]==EMPTY)
+		return EMPTY;
+	for(i=0;train[t][i+1]!=EMPTY;i++);
+	r=train[t][i];
+	train[t][i]=EMPTY;
+	return r;
+}
+
+void load(int t){
+	int i;
+	push(t,dock[0]);
+	for(i=1;dock[i]!=EMPTY;i++)
+		dock[i-1]=dock[i];
+	dock[i-1]=EMPTY;
+}
+
+void xfer(int f,int t) {
+	push(t,pop(f));
+}
+
+void send(int t) {
+	int p;
+	printf("VACTRAIN %d\n", s++);
+	while((p=pop(t))!=EMPTY)
+		printf("%s\n",args[p]);
+}
+ 
+int decode(char *c)  {
+	int i;
+	for(i=RECV;i<=DONE;i++)
+		if(strcmp(c,ops[i])==0)
+			return i;
+}
+
+void trim(char *c)  {
+	int i;
+	for(i=0;c[i];i++) if(c[i]=='\n') c[i]='\0';
+}
+
+int main(int argc,char *argv) {
+int d;
+int to,from;
+int i;
+	for(i=0;i<MAX;i++) dock[i]=train[A][i]=train[B][i]=train[C][i]=EMPTY;
+	while (scanf("%s ",&cmd),(d=decode(cmd))!=DONE) {
+#ifdef DEBUG
+		dump();
+#endif
+		switch(d) {
+			case RECV: 
+				fgets(args[p],256,stdin);
+				trim(args[p]);
+#ifdef DEBUG
+				printf("%s: %s\n",cmd,args[p]);
+#endif
+				recv(p);
+				p++;
+				break;
+			case LOAD:
+				fgets(args[p],256,stdin);
+				to=args[p][0]-'A';
+#ifdef DEBUG
+				printf("%s: %c\n",cmd,to+'A');
+#endif
+				load(to);
+				break;
+			case XFER:
+				fgets(args[p],256,stdin);
+				from=args[p][0]-'A';
+				to=args[p][2]-'A';
+#ifdef DEBUG
+				printf("%s: %c->%c\n",cmd,from+'A',to+'A');
+#endif
+				xfer(from,to);
+				break;
+			case SEND:
+				fgets(args[p],256,stdin);
+				from=args[p][0]-'A';
+#ifdef DEBUG
+				printf("%s: %c\n",cmd,from+'A');
+#endif
+				send(from);
+				break;
+			default: 
+				exit(0);
+		}
+	}
+}
