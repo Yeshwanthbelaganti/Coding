@@ -1,0 +1,48 @@
+Krishna having a series of integers, he has to find the sum of GCD(Greatest Common Divisor) of all the subarrays of an array. 
+GCD of an array is defined as the GCD of all the elements present in it.
+For Ex:
+N=5 , arr[]={1,2,3,4,5}
+Output: 25
+The subarrays of length one are [1], [2], [3], [4], [5] and the sum of their GCDs is 15, similarly subarrays of length 2, are [1, 2], [2, 3], [3, 4], [4, 5], 
+and the sum of their GCDs is 4, similarly for length 3, the sum is 3, similarly for length 4, the sum is 2, similarly for length 5, the sum is 1.
+The total sum becomes 25.
+-------------------------------------------------------------------------
+#include<stdio.h>
+int gcd(int a,int b)
+{
+    if(a==0)
+    {
+        return b;
+    }
+    else
+    {
+        return gcd(b%a,a);
+    }
+}
+int findgcd(int arr[],int n){
+    int gcdsum=0,i,j,k;
+    int tempgcd=0;
+    for(i=0;i<n;i++){
+        for(j=i;j<n;j++){
+            tempgcd=0;
+            for(k=i;k<=j;k++)
+            {
+                tempgcd=gcd(tempgcd,arr[k]);
+            }
+            gcdsum+=tempgcd;
+        }
+    }
+    return gcdsum;
+}
+int main()
+{
+    int n,i;
+    scanf("%d",&n);
+    int arr[n];
+    for(i=0;i<n;i++){
+        scanf("%d",&arr[i]);
+    }
+    int sum=findgcd(arr,n);
+    printf("%d",sum);
+    return 0;
+}
