@@ -1,0 +1,24 @@
+In this problem, we define "set" is a collection of distinct numbers. For two sets A and B, we define their sum set is a set S(A,B)={a+b|a belongs to A,b belongs to B} . 
+In other word, set S(A,B) contains all elements which can be represented as sum of an element in A and an element in B.
+Given two sets A,C your task is to find set of positive integers less than or equals 100 with maximum size such that S(A,B)=C . 
+It is guaranteed that there is unique such set.
+----------------------------------------------------
+# You are using Python
+n = int(input())
+a = list(map(int,input().split()))
+m = int(input())
+c = list(map(int,input().split()))
+l = []
+for i in range(n):
+    for j in range(m):
+        x = c[j]-a[i]
+        l.append(x)
+        
+from collections import Counter
+l = Counter(l)
+ans = []
+for k,v in l.items():
+    if(v==n):
+        ans.append(k)
+ans = sorted(ans)
+print(' '.join(map(str,ans)))
