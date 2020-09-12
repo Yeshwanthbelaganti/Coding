@@ -1,0 +1,26 @@
+Mahesh has three balls, 'a' balls of type A, 'b' balls of type B and 'c' balls of type C.
+His teacher wants him to find out the count of the balls arranged in a straight line such that no two balls of same type are placed near(adjacent).
+Ex: if a=2, b=1 and c=1
+output : 6 (the possibilities are abca,abac, acba, caba, baca and acab ).
+------------------------------------------------------------------------
+def countways(p,q,r,last):
+    if(p<0 or q<0 or r<0):
+        return 0;
+    if(p==1 and q==0 and r==0 and last==0):
+        return 1;
+    if(p==0 and q==1 and r==0 and last==1):
+        return 1;
+    if(p==0 and q==0 and r==1 and last==2):
+        return 1;
+    if(last==0):
+        return countways(p-1,q,r,1)+countways(p-1,q,r,2);
+    if(last==1):
+        return countways(p,q-1,r,0)+countways(p,q-1,r,2);
+    if(last==2):
+        return countways(p,q,r-1,0)+countways(p,q,r-1,1);
+def countutil(p,q,r):
+    return countways(p,q,r,0)+countways(p,q,r,1)+countways(p,q,r,2)
+p=int(input())
+q=int(input())
+r=int(input())
+print(countutil(p,q,r))
